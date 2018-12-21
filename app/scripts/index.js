@@ -105,8 +105,6 @@ const App = {
     }
   },
   showGoodsList: async function () {
-    let now = await ECommerceInstance.getNow()
-    console.log(App.displayTime(now))
     let totalGoods = await ECommerceInstance.totalGoods()
     for (let i = 1; i <= totalGoods; i++) {
       let goods = await ECommerceInstance.goodsInfo(i)
