@@ -1,5 +1,6 @@
 const ECommerce = artifacts.require('./ECommerce.sol')
 module.exports = async function () {
+  console.log(web3.eth.accounts)
   try {
     let instance = await ECommerce.deployed()
     /*let now = parseInt(new Date() / 1000)
