@@ -1,5 +1,5 @@
-const ECommerce = artifacts.require('./ECommerce.sol')
+var ECommerce = artifacts.require("./ECommerce.sol");
 
-module.exports = function (deployer) {
-  deployer.deploy(ECommerce)
-}
+module.exports = function(deployer) {
+  deployer.deploy(ECommerce);
+};

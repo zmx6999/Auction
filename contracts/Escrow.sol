@@ -1,49 +1,49 @@
 pragma solidity ^0.4.24;
 
 contract Escrow {
-    address public buyer;
-    address public seller;
-    address public arbiter;
-    uint public buyerVoteCount;
-    uint public sellerVoteCount;
-    mapping(address=>bool) public voted;
-    bool public over;
+    address buyer;
+    address seller;
+    address arbiter;
 
-    constructor(address _buyer,address _seller,address _arbiter) payable public {
+    uint buyerVoteCount;
+    uint sellerVoteCount;
+
+    mapping(address=>bool) voted;
+    bool over;
+
+    constructor(address _buyer,address _seller,address _arbiter) payable {
         buyer=_buyer;
         seller=_seller;
         arbiter=_arbiter;
     }
 
-    modifier userRestrict(address user) {
-        require(buyer==user || seller==user || arbiter==user);
+    modifier canVote(address voter) {
+        require(!over);
+        require(voter==buyer || voter==seller || voter==arbiter);
+        require(!voted[voter]);
         _;
     }
 
-    function voteBuyer(address user) public userRestrict(user) {
-        require(!over);
-        require(!voted[user]);
-        buyerVoteCount++;
-        voted[user]=true;
+    function voteForBuyer(address voter) public canVote(voter) {
+        buyerVoteCount+=1;
+        voted[voter]=true;
         if(buyerVoteCount>=2) {
             buyer.transfer(address(this).balance);
             over=true;
         }
     }
 
-    function voteSeller(address user) public userRestrict(user) {
-        require(!over);
-        require(!voted[user]);
-        sellerVoteCount++;
-        voted[user]=true;
+    function voteForSeller(address voter) public canVote(voter) {
+        sellerVoteCount+=1;
+        voted[voter]=true;
         if(sellerVoteCount>=2) {
             seller.transfer(address(this).balance);
             over=true;
         }
     }
 
-    function escrowInfo(address user) public view returns (address,address,address,uint,uint,bool,bool) {
-        return (buyer,seller,arbiter,buyerVoteCount,sellerVoteCount,voted[user],over);
+    function escrowInfo(address voter) public view returns (address,address,address,uint,uint,bool,bool) {
+        return (buyer,seller,arbiter,buyerVoteCount,sellerVoteCount,voted[voter],over);
     }
 
     function getBalance() public view returns (uint) {
